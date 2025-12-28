@@ -1,0 +1,41 @@
+services:
+  # FastAPI + Nginx Container
+  fastapi-nginx:
+    build:
+      context: ./fastapi-app
+      dockerfile: Dockerfile
+    container_name: ${FASTAPI_CONTAINER_NAME:-fastapi-container}
+    ports:
+      - "${FASTAPI_PORT:-8001}:80"
+    networks:
+      - app-network
+    restart: ${RESTART_POLICY:-unless-stopped}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/" ]
+      interval: ${HEALTHCHECK_INTERVAL:-30s}
+      timeout: ${HEALTHCHECK_TIMEOUT:-10s}
+      retries: ${HEALTHCHECK_RETRIES:-3}
+      start_period: ${HEALTHCHECK_START_PERIOD:-40s}
+
+  # Express.js + Nginx Container
+  express-nginx:
+    build:
+      context: ./express-app
+      dockerfile: Dockerfile
+    container_name: ${EXPRESS_CONTAINER_NAME:-express-container}
+    ports:
+      - "${EXPRESS_PORT:-8002}:80"
+    networks:
+      - app-network
+    restart: ${RESTART_POLICY:-unless-stopped}
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/" ]
+      interval: ${HEALTHCHECK_INTERVAL:-30s}
+      timeout: ${HEALTHCHECK_TIMEOUT:-10s}
+      retries: ${HEALTHCHECK_RETRIES:-3}
+      start_period: ${HEALTHCHECK_START_PERIOD:-40s}
+
+networks:
+  app-network:
+    driver: bridge
+    name: ${NETWORK_NAME:-docker-networking}

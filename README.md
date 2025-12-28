@@ -68,10 +68,64 @@ docker-networking/
 │   ├── package.json        # Node.js dependencies
 │   ├── nginx.conf          # Nginx reverse proxy config
 │   └── supervisord.conf    # Process manager config
+├── .env                    # Your config (not in Git)
+├── .env.example            # Environment template (in Git)
+├── .gitignore              # Excludes sensitive files
+├── docker-compose.yml      # Docker Compose orchestration
+├── ENV-GUIDE.md            # Environment variables guide
 └── README.md               # This file
 ```
 
 ## 🚀 How to Build and Run
+
+### ⭐ Recommended: Using Docker Compose
+
+The easiest way to run this project is with Docker Compose:
+
+```bash
+# Start all services
+docker-compose up
+
+# Or run in background (detached mode)
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+That's it! Both containers will start automatically. 🎉
+
+### 🔧 Customize with Environment Variables
+
+You can customize ports and settings using a `.env` file:
+
+```bash
+# 1. Copy the example file
+cp .env.example .env
+
+# 2. Edit .env with your preferred values
+# Example: Change FastAPI port to 9001
+echo "FASTAPI_PORT=9001" >> .env
+
+# 3. Start services (automatically uses .env)
+docker-compose up
+```
+
+**Common customizations:**
+- `FASTAPI_PORT` - Change FastAPI port (default: 8001)
+- `EXPRESS_PORT` - Change Express port (default: 8002)
+- `RESTART_POLICY` - Change restart behavior (default: unless-stopped)
+
+**See [ENV-GUIDE.md](./ENV-GUIDE.md) for complete environment variable documentation.**
+
+**Note:** `.env` is excluded from Git (via `.gitignore`) to keep your config private! 🔒
+
+---
+
+### Alternative: Manual Docker Commands
 
 ### Step 1: Build Docker Images
 
@@ -229,7 +283,7 @@ docker rm fastapi-container express-container
 
 To further enhance this project, you could:
 
-- [ ] Add Docker Compose for easier orchestration
+- [x] Add Docker Compose for easier orchestration ✅
 - [ ] Create a custom Docker network for container-to-container communication
 - [ ] Add SSL/TLS certificates for HTTPS
 - [ ] Implement health checks in Dockerfiles
